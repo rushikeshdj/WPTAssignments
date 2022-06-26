@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+         $(() => {
+            $("#pincode").blur(() => {
+          let pincode = $("#pincode").val();
+          console.log(pincode);
+          let parameterstothefunction = {
+            data: { pincode: pincode },
+            url: "http://localhost:900/getareaname",
+            type: "get",
+            dataType: "json",
+            success: (datagivenbyserver) => {
+              console.log(datagivenbyserver);
+
+              if (datagivenbyserver.status) {
+                $("#areaname").text(datagivenbyserver.areaname);
+                $("#msg").text("Pincode Found");
+              } else {
+                $("#areaname").text("");
+                $("#msg").text("Pincode not Found");
+              }
+            },
+            error: (errorgivenbyserver) => {
+              console.log("failed to contact server " + errorgivenbyserver);
+            },
+          };
+          $.ajax(parameterstothefunction);
+        });
+         });
+        
+    </script>
+</head>
+<body>
+    <p>Pincode</p>
+    <input type="text" id="pincode">
+    <p>Area Name: <span id="areaname"></span></p>
+    <p id="msg"></p>
+</body>
+</html>

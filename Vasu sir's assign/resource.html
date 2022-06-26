@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+      $(() => {
+        $("#viewall").click(() => {
+          let input = { resourceid: $("#resourceid").val() };
+          let parameterstothefunction = {
+            data: input,
+            url: "http://localhost:900/getAllResources",
+            type: "get",
+            dataType: "json",
+            success: (datagivenbyserver) => {
+              console.log(datagivenbyserver);
+              let htmlDisplay = "";
+              for (let i = 0; i < datagivenbyserver.length; i++) {
+                htmlDisplay +=
+                  datagivenbyserver[i].resourceid +
+                  " " +
+                  datagivenbyserver[i].resourcename +
+                  " " +
+                  datagivenbyserver[i].status +
+                  "<br>";
+              }
+              $("#display").html(htmlDisplay);
+              $("#msg").text("Resource Displayed");
+            },
+            error: (errorgivenbyserver) => {
+              console.log("failed to contact server " + errorgivenbyserver);
+            },
+          };
+          $.ajax(parameterstothefunction);
+        });
+
+        $("#resourceid").blur(() => {
+          let resourceid = $("#resourceid").val();
+          let parameterstothefunction = {
+            data: { resourceid: resourceid },
+            url: "http://localhost:900/getResource",
+            type: "get",
+            dataType: "json",
+            success: (datagivenbyserver) => {
+              console.log(datagivenbyserver);
+
+              if (datagivenbyserver.status) {
+                $("#resourcename").val(
+                  datagivenbyserver.resourceDetails.resourcename
+                );
+                $("#status").val(datagivenbyserver.resourceDetails.status);
+                $("#msg").text("Resource Found");
+              } else {
+                $("#resourcename").val("");
+                $("#status").val("");
+                $("#msg").text("Resource not Found");
+              }
+            },
+            error: (errorgivenbyserver) => {
+              console.log("failed to contact server " + errorgivenbyserver);
+            },
+          };
+          $.ajax(parameterstothefunction);
+        });
+
+        $("#add").click(() => {
+          if (
+            $("#resourceid").val() != "" &&
+            $("#resourcename").val() != "" &&
+            $("#status").val() != ""
+          ) {
+            let input = {
+              resourceid: $("#resourceid").val(),
+              resourcename: $("#resourcename").val(),
+              status: $("#status").val(),
+            };
+            let parameterstothefunction = {
+              data: input,
+              url: "http://localhost:900/addResource",
+              type: "get",
+              dataType: "json",
+              success: (datagivenbyserver) => {
+                console.log(datagivenbyserver);
+                if (datagivenbyserver) {
+                  $("#msg").text("Resource added Successfully");
+                } else {
+                  $("#msg").text("Error");
+                }
+              },
+              error: (errorgivenbyserver) => {
+                console.log("failed to contact server " + errorgivenbyserver);
+              },
+            };
+            $.ajax(parameterstothefunction);
+          } else {
+            $("#msg").text("Please Enter all values");
+          }
+        });
+
+        $("#update").click(() => {
+          if (
+            $("#resourceid").val() != "" &&
+            $("#resourcename").val() != "" &&
+            $("#status").val() != ""
+          ) {
+            let input = {
+              resourceid: $("#resourceid").val(),
+              resourcename: $("#resourcename").val(),
+              status: $("#status").val(),
+            };
+            let parameterstothefunction = {
+              data: input,
+              url: "http://localhost:900/updateResource",
+              type: "get",
+              dataType: "json",
+              success: (datagivenbyserver) => {
+                console.log(datagivenbyserver);
+                if (datagivenbyserver) {
+                  $("#msg").text("Resource updated Successfully");
+                } else {
+                  $("#msg").text("Error");
+                }
+              },
+              error: (errorgivenbyserver) => {
+                console.log("failed to contact server " + errorgivenbyserver);
+              },
+            };
+            $.ajax(parameterstothefunction);
+          } else {
+            $("#msg").text("Please Enter all values");
+          }
+        });
+
+        $("#delete").click(() => {
+          let resourceid = $("#resourceid").val();
+          let parameterstothefunction = {
+            data: { resourceid: resourceid },
+            url: "http://localhost:900/deleteResource",
+            type: "get",
+            dataType: "json",
+            success: (datagivenbyserver) => {
+              console.log(datagivenbyserver);
+
+              if (datagivenbyserver) {
+                $("#resourceid").val("");
+                $("#resourcename").val("");
+                $("#status").val("");
+
+                $("#msg").text("Resource Deleted");
+              } else {
+                $("#msg").text("Error");
+              }
+            },
+            error: (errorgivenbyserver) => {
+              console.log("failed to contact server " + errorgivenbyserver);
+            },
+          };
+          $.ajax(parameterstothefunction);
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <br />
+    <div class="main">
+      <input type="text" id="resourceid" placeholder="Resource Number" />
+      <span id="msg"></span> <br />
+      <br />
+      <input type="text" id="resourcename" placeholder="Resource Name" />
+      <br /><br />
+      <input
+        type="text"
+        id="status"
+        placeholder="Resource status"
+      /><br /><br />
+      <br />
+      <br /><br /><button id="add" class="button">Add Resource</button>
+      <button id="update" class="button">Update Resource</button><br /><br />
+      <button id="viewall" class="button">View All Resources</button>
+      <button id="delete" class="button">Delete Resource</button>
+      <hr />
+      <p id="display"></p>
+    </div>
+  </body>
+</html>
